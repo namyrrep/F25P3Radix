@@ -39,20 +39,23 @@ public class Radix {
      *
      * @throws IOException
      */
-    private void radixSort() throws IOException {
+     private void radixSort() throws IOException {
     	Integer[] array = new Integer[N];
+    	int len = (int)this.file.length();
     	//Gets information from file.
-    	for (int n = 0; n < N; n++)
+    	for (int n = 0; n < len; n++)
     		array[n] = this.file.readInt();
     	//Sorts information from file.
-    	radix(array, 32, 8);
+    	radix(array, 32, 10);
     	//Prints information from new array.
-    	this.file.seek(0);
-    	for (int n = 0; n < N; n++)
-    		this.file.writeInt(array[n]);
+    	for (int n = 0; n < len; n++)
+    		this.writer.print(array[n]);
     	
-    	this.writer.print(file);
+    	writer.flush();
+    	writer.close();
+    	file.close();
     }
+    
     
     /**
      * 
