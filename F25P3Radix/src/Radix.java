@@ -11,6 +11,7 @@ public class Radix {
 	
 	private RandomAccessFile file;
 	private PrintWriter writer;
+  private static final int N = 112500;
 
     /**
      * Create a new Radix object.
@@ -33,9 +34,24 @@ public class Radix {
      *
      * @throws IOException
      */
+    /**
+     * Do a Radix sort
+     *
+     * @throws IOException
+     */
     private void radixSort() throws IOException {
-    	Integer[] array = new Integer[112500];
+    	Integer[] array = new Integer[N];
+    	//Gets information from file.
+    	for (int n = 0; n < N; n++)
+    		array[n] = this.file.readInt();
+    	//Sorts information from file.
     	radix(array, 32, 8);
+    	//Prints information from new array.
+    	this.file.seek(0);
+    	for (int n = 0; n < N; n++)
+    		this.file.writeInt(array[n]);
+    	
+    	this.writer.print(file);
     }
     
     /**
