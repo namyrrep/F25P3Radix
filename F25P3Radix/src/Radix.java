@@ -1,4 +1,3 @@
-import java.nio.*;
 import java.io.*;
 
 // The Radix Sort implementation
@@ -9,6 +8,9 @@ import java.io.*;
  * @version {Put Something Here}
  */
 public class Radix {
+	
+	private RandomAccessFile file;
+	private PrintWriter writer;
 
     /**
      * Create a new Radix object.
@@ -20,6 +22,9 @@ public class Radix {
     public Radix(RandomAccessFile theFile, PrintWriter s)
         throws IOException
     {
+    	file = theFile;
+    	writer = s;
+    	this.radixSort();
     }
 
 
