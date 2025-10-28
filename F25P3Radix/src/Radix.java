@@ -1,4 +1,7 @@
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 // The Radix Sort implementation
 // -------------------------------------------------------------------------
@@ -40,11 +43,19 @@ public class Radix {
      * @throws IOException
      */
      private void radixSort() throws IOException {
-    	Integer[] array = new Integer[N];
     	int len = (int)this.file.length();
     	//Gets information from file.
-    	for (int n = 0; n < len; n++)
-    		array[n] = this.file.readInt();
+    	long length = file.length();
+		int N = (int)(length / 4);
+		byte[] bytes = new byte[(int)length];
+		file.readFully(bytes);
+
+		ByteBuffer bb = ByteBuffer.wrap(bytes);
+		bb.order(ByteOrder.BIG_ENDIAN);
+		IntBuffer ib = bb.asIntBuffer();
+
+		Integer[] array = new Integer[N];
+		ib.get(array);
     	//Sorts information from file.
     	radix(array, 32, 10);
     	//Prints information from new array.
