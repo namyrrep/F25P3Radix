@@ -38,4 +38,21 @@ public class RadixProjTest extends TestCase
         assertFalse(fileChecker.checkFile("input.txt"));
         System.out.println("Done testFailSort");
     }
+    
+    /**
+     * Make a random file and test it.
+     * @throws Exception 
+     */
+    public void testRadix() throws Exception
+    {
+    	FileGenerator it = new FileGenerator();
+    	it.generateFile("input.txt", 1, "b");
+    	RandomAccessFile testFile = new RandomAccessFile("input.txt", "rw");
+    	PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("testStats.txt", true)));
+    	Radix rad = new Radix(testFile, writer);
+    	assertTrue(fileChecker.checkFile(testFile.readLine()));
+    	testFile.close();
+    	writer.flush();
+    	writer.close();
+    }
 }
