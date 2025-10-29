@@ -1,7 +1,5 @@
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
+import java.nio.*;
 
 // The Radix Sort implementation
 // -------------------------------------------------------------------------
@@ -12,9 +10,9 @@ import java.nio.IntBuffer;
  */
 public class Radix {
 	
+	private static final int N = 112500;
 	private RandomAccessFile file;
 	private PrintWriter writer;
-  private static final int N = 112500;
 
     /**
      * Create a new Radix object.
@@ -37,45 +35,41 @@ public class Radix {
      *
      * @throws IOException
      */
-    /**
-     * Do a Radix sort
-     *
-     * @throws IOException
-     */
-     private void radixSort() throws IOException {
-    	int len = (int)this.file.length();
+    private void radixSort() throws IOException {
     	//Gets information from file.
     	long length = file.length();
-		int N = (int)(length / 4);
-		byte[] bytes = new byte[(int)length];
-		file.readFully(bytes);
+    	int N = (int)(length / 4);
+    	byte[] bytes = new byte[(int)length];
+    	file.seek(0);
+    	file.readFully(bytes);
 
-		ByteBuffer bb = ByteBuffer.wrap(bytes);
-		bb.order(ByteOrder.BIG_ENDIAN);
-		IntBuffer ib = bb.asIntBuffer();
-
-		Integer[] array = new Integer[N];
-		ib.get(array);
+    	IntBuffer ib = ByteBuffer.wrap(bytes).asIntBuffer();
+    	
+    	int[] array = new int[N];
+    	ib.get(array);
     	//Sorts information from file.
     	radix(array, 32, 10);
-    	//Prints information from new array.
-    	for (int n = 0; n < len; n++)
-    		this.writer.print(array[n]);
+    	//Sorted information goes into the tempFile
+    	File temp = File.createTempFile("sorted_", ".bin");
+    	try (RandomAccessFile tempFile = new RandomAccessFile(temp, "rw")) {
+    		ByteBuffer bb = ByteBuffer.allocate(N * Integer.BYTES);
+    		bb.asIntBuffer().put(array);
+    		tempFile.write(bb.array());
+    	}
     	
     	writer.flush();
     	writer.close();
     	file.close();
     }
     
-    
     /**
      * 
      * @param A Array that we are sorting.
      * @param k	total bits per data in A
-     * @param r bits per digit sorted by (sort 2 ints at a time for 8 bits)
+     * @param r number of digits (10)
      */
-    static void radix(Integer[] A, int k, int r) {
-    	  Integer[] B = new Integer[A.length];
+    static void radix(int[] A, int k, int r) {
+    	  int[] B = new int[A.length];
     	  int[] count = new int[r];     // Count[i] stores number of records with digit value i
     	  int i, j, rtok;
 
